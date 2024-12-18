@@ -5,12 +5,15 @@ def mask_account_card(card_type_and_number: str) -> str:
     """
     Обрабатывает информацию как о картах, так и о счетах
     """
-    if len(card_type_and_number.split()[-1]) == 16:
-        new_number1 = get_mask_card_number(card_type_and_number.split()[-1])
-        return f"{card_type_and_number[:-17]} {new_number1}"
-    elif len(card_type_and_number.split()[-1]) == 20:
-        new_number2 = get_mask_account(card_type_and_number.split()[-1])
-        return f"{card_type_and_number[:-21]} **{new_number2[-4:]}"
+    parts = card_type_and_number.split()
+    title = " ".join(parts[:-1])
+    number = parts[-1]
+
+    if len(number) == 16:
+        hidden_number = get_mask_card_number(number)
+    else:
+        hidden_number = get_mask_account(number)
+    return f"{title} {hidden_number}"
 
 
 def get_date(date_format: str) -> str:
