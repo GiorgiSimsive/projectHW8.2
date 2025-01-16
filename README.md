@@ -44,4 +44,4 @@ python manage.py runserver
 1. Для запуска тестов выполните следующую команду в терминале:
 `pytest`
 2. Если хотите увидеть вывод в процентах:
-`pytest --cov --cov-report term-missing`
+`pytest --cov --cov-report term-missing`ck
