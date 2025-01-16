@@ -5,7 +5,13 @@ def mask_account_card(card_type_and_number: str) -> str:
     """
     Обрабатывает информацию как о картах, так и о счетах
     """
+    if not isinstance(card_type_and_number, str):
+        raise TypeError("Ожидается строка с информацией о карте или счете")
+
     parts = card_type_and_number.split()
+    if len(parts) < 2:
+        raise ValueError("Строка должна содержать как минимум тип и номер карты/счета")
+
     title = " ".join(parts[:-1])
     number = parts[-1]
 
@@ -21,4 +27,6 @@ def get_date(date_format: str) -> str:
     Меняет даты в формате "ДД.ММ.ГГГГ"
     """
     new_date_format = date_format[0:10].split("-")
+    if len(new_date_format) != 3:
+        raise ValueError("Некорректный формат даты. Ожидается строка в формате 'ГГГГ-ММ-ДД'.")
     return ".".join(new_date_format[::-1])
