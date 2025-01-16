@@ -111,3 +111,30 @@ def test_card_number_generator_large_range() -> None:
         "9999 9999 9999 9999",
     ]
     assert result == expected
+
+
+@pytest.mark.parametrize(  # type: ignore
+    "transactions, expected",
+    [
+        ([{"description": "Purchase"}], ["Purchase"]),
+        ([{"description": ""}], []),
+        ([{}], []),
+        ([{"description": "Transfer"}, {"description": "Refund"}], ["Transfer", "Refund"]),
+    ],
+)
+def test_transaction_descriptions(transactions, expected):  # type: ignore
+    result = list(transaction_descriptions(transactions))
+    assert result == expected
+
+
+@pytest.mark.parametrize(  # type: ignore
+    "start, end, expected",
+    [
+        (1, 1, ["0000 0000 0000 0001"]),
+        (1234, 1235, ["0000 0000 0000 1234", "0000 0000 0000 1235"]),
+        (0, 0, ["0000 0000 0000 0000"]),
+    ],
+)
+def test_card_number_generator(start, end, expected):  # type: ignore
+    result = list(card_number_generator(start, end))
+    assert result == expected
