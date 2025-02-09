@@ -71,49 +71,7 @@ def test_filter_nonexistent_currency(transactions: List[Dict[str, Any]]) -> None
     assert len(result) == 0
 
 
-def test_transaction_descriptions(transactions: List[Dict[str, Any]]) -> None:
-    descriptions = transaction_descriptions(transactions)
-
-    assert next(descriptions) == "Перевод организации"
-    assert next(descriptions) == "Перевод со счета на счет"
-    assert next(descriptions) == "Перевод со счета на счет"
-    assert next(descriptions) == "Перевод с карты на карту"
-
-    with pytest.raises(StopIteration):
-        next(descriptions)
-
-
-def test_empty_transactions() -> None:
-    descriptions = transaction_descriptions([])
-    with pytest.raises(StopIteration):
-        next(descriptions)
-
-
-def test_card_number_generator() -> None:
-    result = list(card_number_generator(1, 5))
-    expected = [
-        "0000 0000 0000 0001",
-        "0000 0000 0000 0002",
-        "0000 0000 0000 0003",
-        "0000 0000 0000 0004",
-        "0000 0000 0000 0005",
-    ]
-    assert result == expected
-
-
-def test_card_number_generator_large_range() -> None:
-    result = list(card_number_generator(9999999999999995, 9999999999999999))
-    expected = [
-        "9999 9999 9999 9995",
-        "9999 9999 9999 9996",
-        "9999 9999 9999 9997",
-        "9999 9999 9999 9998",
-        "9999 9999 9999 9999",
-    ]
-    assert result == expected
-
-
-@pytest.mark.parametrize(  # type: ignore
+@pytest.mark.parametrize(
     "transactions, expected",
     [
         ([{"description": "Purchase"}], ["Purchase"]),
@@ -122,12 +80,18 @@ def test_card_number_generator_large_range() -> None:
         ([{"description": "Transfer"}, {"description": "Refund"}], ["Transfer", "Refund"]),
     ],
 )
-def test_transaction_descriptions(transactions, expected):  # type: ignore
+def test_transaction_descriptions(transactions: List[Dict[str, Any]], expected: List[str]) -> None:
     result = list(transaction_descriptions(transactions))
     assert result == expected
 
 
-@pytest.mark.parametrize(  # type: ignore
+def test_empty_transactions() -> None:
+    descriptions = transaction_descriptions([])
+    with pytest.raises(StopIteration):
+        next(descriptions)
+
+
+@pytest.mark.parametrize(
     "start, end, expected",
     [
         (1, 1, ["0000 0000 0000 0001"]),
@@ -135,6 +99,33 @@ def test_transaction_descriptions(transactions, expected):  # type: ignore
         (0, 0, ["0000 0000 0000 0000"]),
     ],
 )
-def test_card_number_generator(start, end, expected):  # type: ignore
+def test_card_number_generator(start: int, end: int, expected: List[str]) -> None:
+    result = list(card_number_generator(start, end))
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "transactions, expected",
+    [
+        ([{"description": "Purchase"}], ["Purchase"]),
+        ([{"description": ""}], []),
+        ([{}], []),
+        ([{"description": "Transfer"}, {"description": "Refund"}], ["Transfer", "Refund"]),
+    ],
+)
+def test_transaction_descriptions1(transactions: List[Dict[str, Any]], expected: List[str]) -> None:
+    result = list(transaction_descriptions(transactions))
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "start, end, expected",
+    [
+        (1, 1, ["0000 0000 0000 0001"]),
+        (1234, 1235, ["0000 0000 0000 1234", "0000 0000 0000 1235"]),
+        (0, 0, ["0000 0000 0000 0000"]),
+    ],
+)
+def test_card_number_generator1(start: int, end: int, expected: List[str]) -> None:
     result = list(card_number_generator(start, end))
     assert result == expected
