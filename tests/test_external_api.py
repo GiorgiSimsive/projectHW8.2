@@ -1,34 +1,40 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from src.external_api import convert_currency, process_transaction
 
 
-@patch("requests.get")
-def test_convert_currency(mock_get) -> None:  # type: ignore
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {"result": 1000.0}
-    mock_get.return_value = mock_response
+@pytest.fixture
+def mock_requests_get():  # type: ignore
+    with patch("requests.get") as mock_get:
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"result": 75.0}
+        mock_get.return_value = mock_response
+        yield mock_get
 
+
+def test_convert_currency(mock_requests_get: MagicMock) -> None:
     result = convert_currency(1, "USD")
-    assert result == 1000.0
+    assert result == 75.0
 
 
-@patch("src.external_api.convert_currency")
-def test_process_transaction_usd(mock_convert) -> None:  # type: ignore
-    mock_convert.return_value = 1000.0
-
-    result = process_transaction(1, "USD")
-    assert result == 1000.0
-
-
-@patch("src.external_api.convert_currency")
-def test_process_transaction_eur(mock_convert) -> None:  # type: ignore
-    mock_convert.return_value = 90.0
-    result = process_transaction(1, "EUR")
-    assert result == 90.0
+@patch("src.external_api.convert_currency", return_value=75.0)
+def test_process_transaction_usd(mock_convert: MagicMock) -> None:
+    transaction = {"amount": 1, "currency": "USD"}
+    result = process_transaction(transaction)
+    assert result == 75.0
+    mock_convert.assert_called_once_with(1, "USD")
 
 
-def test_process_transaction_other_currency() -> None:
-    result = process_transaction(100, "GBP")
-    assert result == 100
+def test_process_transaction_rub() -> None:
+    transaction = {"amount": 1000, "currency": "RUB"}
+    result = process_transaction(transaction)
+    assert result == 1000
+
+
+def test_process_transaction_invalid() -> None:
+    transaction = {"amount": 1000}
+    with pytest.raises(ValueError):
+        process_transaction(transaction)
