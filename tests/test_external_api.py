@@ -22,19 +22,19 @@ def test_convert_currency(mock_requests_get: MagicMock) -> None:
 
 @patch("src.external_api.convert_currency", return_value=75.0)
 def test_process_transaction_usd(mock_convert: MagicMock) -> None:
-    transaction = {"amount": 1, "currency": "USD"}
+    transaction = {"operationAmount": {"amount": 1, "currency": {"code": "USD"}}}
     result = process_transaction(transaction)
     assert result == 75.0
-    mock_convert.assert_called_once_with(1, "USD")
+    mock_convert.assert_called_once_with(1.0, "USD")
 
 
 def test_process_transaction_rub() -> None:
-    transaction = {"amount": 1000, "currency": "RUB"}
+    transaction = {"operationAmount": {"amount": 1000, "currency": {"code": "RUB"}}}
     result = process_transaction(transaction)
     assert result == 1000
 
 
 def test_process_transaction_invalid() -> None:
-    transaction = {"amount": 1000}
+    transaction = {"operationAmount": {"amount": 1000}}
     with pytest.raises(ValueError):
         process_transaction(transaction)

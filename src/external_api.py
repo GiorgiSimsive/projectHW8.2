@@ -30,10 +30,11 @@ def process_transaction(transaction: dict) -> float:
     Принимает словарь транзакции.
     Извлекает сумму и валюту, возвращает сумму в рублях.
     """
-    amount = transaction.get("amount")
-    currency = transaction.get("currency")
+    operation_amount = transaction.get("operationAmount", {})
+    amount = operation_amount.get("amount")
+    currency = operation_amount.get("currency", {}).get("code")
 
-    if not amount or not currency:
+    if amount is None or currency is None:
         raise ValueError("Некорректные данные транзакции: отсутствуют ключи 'amount' или 'currency'")
 
     if currency == "RUB":
