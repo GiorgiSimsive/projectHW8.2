@@ -5,13 +5,13 @@ import os
 log_dir = "logs"
 os.makedirs(log_dir, exist_ok=True)
 
-
 log_file = os.path.join(log_dir, "utils.log")
 logging.basicConfig(
-    filename=log_file, filemode="w", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    filename=log_file, filemode="w", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
 )
 
 logger = logging.getLogger("utils")
+logger.setLevel(logging.DEBUG)
 
 
 def load_transactions(file_path: str) -> list:

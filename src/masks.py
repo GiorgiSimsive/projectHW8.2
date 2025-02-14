@@ -5,13 +5,13 @@ from typing import Union
 log_dir = "logs"
 os.makedirs(log_dir, exist_ok=True)
 
-
 log_file = os.path.join(log_dir, "masks.log")
 logging.basicConfig(
-    filename=log_file, filemode="w", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    filename=log_file, filemode="w", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
 )
 
 logger = logging.getLogger("masks")
+logger.setLevel(logging.DEBUG)
 
 
 def get_mask_card_number(card_number: Union[str, int]) -> str:
