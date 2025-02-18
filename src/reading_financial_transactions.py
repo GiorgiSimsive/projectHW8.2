@@ -1,18 +1,18 @@
 import pandas as pd
-
+from pandas import DataFrame
 
 csv_file = "transactions.csv"
 xlsx_file = "transactions_excel.xlsx"
 
 
-def read_csv(file_path):
+def read_csv(file_path: str) -> DataFrame:
     """
     Чтение CSV-файла
     """
     return pd.read_csv(file_path)
 
 
-def read_xlsx(file_path):
+def read_xlsx(file_path: str) -> DataFrame:
     """
     Чтение XLSX-файла
     """
