@@ -1,45 +1,70 @@
-import json
 import csv
-import pandas as pd
+import json
 import re
 
-import json
+import pandas as pd
 
 
-def load_transactions_from_json(file_path):
+def load_transactions_from_json(file_path):  # type: ignore
+    """
+    Загружает список транзакций из JSON-файла
+    """
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
 
 
-def load_transactions_from_csv(file_path):
+def load_transactions_from_csv(file_path):  # type: ignore
+    """
+    Загружает список транзакций из CSV-файла
+    """
     with open(file_path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         return list(reader)
 
 
-def load_transactions_from_xlsx(file_path):
+def load_transactions_from_xlsx(file_path):  # type: ignore
+    """
+    Загружает список транзакций из XLSX-файла
+    """
     df = pd.read_excel(file_path)
     return df.to_dict(orient="records")
 
 
-def filter_transactions_by_status(transactions, status):
-    return [t for t in transactions if t.get("status", "").lower() == status.lower()]
+def filter_transactions_by_status(transactions, status):  # type: ignore
+    """
+    Фильтрует транзакции по статусу
+    """
+    return [t for t in transactions if t.get("state", "").lower() == status.lower()]
 
 
-def sort_transactions_by_date(transactions, ascending=True):
+def sort_transactions_by_date(transactions, ascending=True):  # type: ignore
+    """
+    Сортирует транзакции по дате
+    """
     return sorted(transactions, key=lambda x: x.get("date", ""), reverse=not ascending)
 
 
-def filter_transactions_by_currency(transactions, currency="руб."):
+def filter_transactions_by_currency(transactions, currency="руб."):  # type: ignore
+    """
+    Фильтрует транзакции по валюте
+    """
     return [t for t in transactions if currency in t.get("amount", "").lower()]
 
 
-def filter_transactions_by_description(transactions, search_string):
+def filter_transactions_by_description(transactions, search_string):  # type: ignore
+    """
+    Фильтрует транзакции по строке в описании
+    """
     pattern = re.compile(re.escape(search_string), re.IGNORECASE)
     return [t for t in transactions if pattern.search(t.get("description", ""))]
 
 
-def main():
+def main() -> None:  # type: ignore
+    """
+    Основная функция, которая взаимодействует с пользователем и обрабатывает транзакции.
+    Запрашивает пользователя о типе файла, фильтрует и сортирует транзакции
+    по выбранным параметрам, а затем выводит итоговый список транзакций
+    """
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
     print("Выберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")
@@ -67,10 +92,10 @@ def main():
         status = input("Введите статус для фильтрации (EXECUTED, CANCELED, PENDING): ")
         if status.upper() in statuses:
             transactions = filter_transactions_by_status(transactions, status)
-            print(f"Операции отфильтрованы по статусу \"{status.upper()}\".")
+            print(f'Операции отфильтрованы по статусу "{status.upper()}".')
             break
         else:
-            print(f"Статус операции \"{status}\" недоступен.")
+            print(f'Статус операции "{status}" недоступен.')
 
     if not transactions:
         print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")
@@ -85,8 +110,9 @@ def main():
     if currency_choice == "да":
         transactions = filter_transactions_by_currency(transactions)
 
-    search_choice = input(
-        "Отфильтровать список транзакций по определенному слову в описании? (Да/Нет): ").strip().lower()
+    search_choice = (
+        input("Отфильтровать список транзакций по определенному слову в описании? (Да/Нет): ").strip().lower()
+    )
     if search_choice == "да":
         search_word = input("Введите слово для фильтрации: ")
         transactions = filter_transactions_by_description(transactions, search_word)

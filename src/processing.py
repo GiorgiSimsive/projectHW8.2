@@ -27,7 +27,7 @@ def sort_by_date(data: list, descending: bool = True) -> list:
     return sorted(data, key=lambda x: x["date"], reverse=descending)
 
 
-def filter_transactions_by_description(transactions, search_string):
+def filter_transactions_by_description(transactions, search_string):  # type: ignore
     """
     Фильтрует список банковских операций по наличию строки поиска в описании.
     """
@@ -35,7 +35,7 @@ def filter_transactions_by_description(transactions, search_string):
     return [transaction for transaction in transactions if pattern.search(transaction.get("description", ""))]
 
 
-def count_transactions_by_category(transactions, categories):
+def count_transactions_by_category(transactions, categories):  # type: ignore
     """
     Подсчитывает количество банковских операций в каждой категории.
     """
@@ -46,5 +46,8 @@ def count_transactions_by_category(transactions, categories):
         for category in categories:
             if category.lower() in description:
                 category_counts[category] += 1
+    for category in categories:
+        if category not in category_counts:
+            category_counts[category] = 0
 
     return dict(category_counts)
