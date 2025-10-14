@@ -1,6 +1,7 @@
 import pytest
 
-from src.processing import filter_by_state, sort_by_date
+from src.processing import (count_transactions_by_category, filter_by_state, filter_transactions_by_description,
+                            sort_by_date)
 
 
 def test_filter_by_state() -> None:
@@ -70,3 +71,36 @@ def test_value_error_non_dict_elements() -> None:
 def test_type_error_non_list_input() -> None:
     with pytest.raises(TypeError):
         sort_by_date("not_a_list")  # type: ignore
+
+
+def test_count_transactions_by_category():  # type: ignore
+    transactions = [
+        {"description": "Payment for groceries"},
+        {"description": "Bank fee"},
+        {"description": "Payment for rent"},
+        {"description": "Payment for groceries"},
+    ]
+
+    categories = ["groceries", "rent", "bank fee"]
+
+    result = count_transactions_by_category(transactions, categories)
+    assert result == {"groceries": 2, "rent": 1, "bank fee": 1}
+    categories = ["salary", "investment"]
+    result = count_transactions_by_category(transactions, categories)
+    assert result == {"salary": 0, "investment": 0}
+
+
+def test_filter_transactions_by_description():  # type: ignore
+    transactions = [
+        {"description": "Payment for groceries"},
+        {"description": "Bank fee"},
+        {"description": "Payment for rent"},
+    ]
+
+    result = filter_transactions_by_description(transactions, "payment")
+    assert len(result) == 2
+    assert result[0]["description"] == "Payment for groceries"
+    assert result[1]["description"] == "Payment for rent"
+
+    result = filter_transactions_by_description(transactions, "Payment")
+    assert len(result) == 2
